@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
 
+from cadastro_autor import listar_autores
 from cadastro_livro import (alterar, consultar, consultar_por_id, deletar,
                             inserir)
 from conexao import conecta_db
-from cadastro_autor import listar_autores
 
 app = Flask(__name__)
 

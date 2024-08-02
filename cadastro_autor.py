@@ -1,5 +1,6 @@
 from conexao import conecta_db
 
+
 def listar_autores(conexao):
     autores = []
     cursor = conexao.cursor()
