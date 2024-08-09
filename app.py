@@ -4,7 +4,8 @@ from cadastro_autor import listar_autores, inserir_autor_bd, alterar_autor_bd, d
 from cadastro_livro import (alterar, consultar, consultar_por_id, deletar,
                             inserir)
 from conexao import conecta_db
-
+from cadastro_usuario import (listar_usuarios, inserir_usuario_bd, alterar_usuario_bd, deletar_usuario_bd, consultar_usuario_por_id,
+verificar_login)
 
 app = Flask(__name__)
 
@@ -78,6 +79,58 @@ def consultar_autor(id):
    conexao = conecta_db()
    autor = consultar_autor_por_id(conexao,id)
    return jsonify(autor)
+
+
+
+
+
+
+
+@app.route("/usuarios", methods=["GET"])
+def listar_todos_usuarios():
+    conexao = conecta_db()
+    usuarios = listar_usuarios(conexao)
+    return jsonify(usuarios)
+
+@app.route("/usuarios", methods=["POST"])
+def inserir_usuario():
+    conexao = conecta_db()
+    data = request.get_json()
+    login = data["login"]
+    senha = data["senha"]
+    inserir_usuario_bd(conexao, login, senha)
+    return jsonify(data)
+
+@app.route("/usuarios/<int:id>", methods=["PUT"])
+def alterar_usuario(id):
+    conexao = conecta_db()
+    data = request.get_json()
+    nome=data["nome"]
+    alterar_usuario_bd(conexao, int(id), nome)
+    return jsonify(data)
+
+@app.route("/usuarios/<int:id>", methods=["DELETE"])
+def deletar_usuario(id):
+    conexao = conecta_db() 
+    deletar_usuario_bd(conexao, id)
+    return jsonify({"message": "autor deletado com sucesso" })
+
+@app.route("/usuarios/<int:id>", methods=["GET"])
+def consultar_usuario(id):
+   conexao = conecta_db()
+   usuario = consultar_usuario_por_id(conexao, id)
+   return jsonify(usuario)
+
+
+@app.route("/autenticar", methods=["POST"])
+def autenticar_login():
+    conexao = conecta_db()
+    data = request.get_json()
+    login = data["login"]
+    senha = data["senha"]
+    resultado = verificar_login(conexao, login, senha)
+    print(login, senha)
+    return jsonify(resultado)
 
 
 if __name__ == "__main__":
