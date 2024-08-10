@@ -129,7 +129,7 @@ def autenticar_login():
     login = data["login"]
     senha = data["senha"]
     resultado = verificar_login(conexao, login, senha)
-    print(login, senha)
+
     return jsonify(resultado)
 
 
