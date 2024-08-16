@@ -2,10 +2,11 @@ from flask import Flask, jsonify, request
 
 from cadastro_autor import listar_autores, inserir_autor_bd, alterar_autor_bd, deletar_autor_bd, consultar_autor_por_id
 from cadastro_livro import (alterar, consultar, consultar_por_id, deletar,
-                            inserir)
+                            inserir,)
 from conexao import conecta_db
 from cadastro_usuario import (listar_usuarios, inserir_usuario_bd, alterar_usuario_bd, deletar_usuario_bd, consultar_usuario_por_id,
 verificar_login)
+from cadastro_editora import inserir_editora_bd 
 
 app = Flask(__name__)
 
@@ -20,7 +21,9 @@ def inserir_livro():
     conexao = conecta_db()
     data = request.get_json()
     nome=data["nome"]
-    inserir(conexao,nome)
+    id_editora=data["id_editora"]
+    id_autor=data["id_autor"]
+    inserir(conexao,nome,id_editora,id_autor)
     return jsonify(data)
 
 @app.route("/livros/<int:id>", methods=["PUT"])
@@ -129,8 +132,18 @@ def autenticar_login():
     login = data["login"]
     senha = data["senha"]
     resultado = verificar_login(conexao, login, senha)
-
     return jsonify(resultado)
+
+
+@app.route("/editoras", methods=["POST"])
+def inserir_editora():
+    conexao = conecta_db()
+    data = request.get_json()
+    nome = data["nome"]
+    inserir_editora_bd(conexao, nome)
+    print(nome)
+    return jsonify(data)
+
 
 
 if __name__ == "__main__":

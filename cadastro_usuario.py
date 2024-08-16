@@ -55,7 +55,7 @@ def verificar_login(conexao, login, senha):
         senha_do_banco = registro[2]
         senha_criptografada = bcrypt.hashpw(senha.encode('utf-8'),bcrypt.gensalt())
 
-        if bcrypt.checkpw(senha_do_banco, str(senha_criptografada)):
+        if bcrypt.checkpw(senha_do_banco, senha_criptografada):
             return "Login bem sucedido"
         else:
             return "Login falhou. Verifique a senha"
