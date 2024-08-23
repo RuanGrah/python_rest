@@ -7,8 +7,17 @@ from conexao import conecta_db
 from cadastro_usuario import (listar_usuarios, inserir_usuario_bd, alterar_usuario_bd, deletar_usuario_bd, consultar_usuario_por_id,
 verificar_login)
 from cadastro_editora import inserir_editora_bd 
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 app = Flask(__name__)
+
+app.config['JWT_SECRET_KEY'] = 'designcursos' # Use uma chave segura em produção 
+jwt = JWTManager(app)
+
+users = {
+    "user1": "password1",
+    "user2": "password2"
+}
 
 @app.route("/livros/<int:id>", methods=["GET"])
 def get_livro(id):
@@ -83,12 +92,6 @@ def consultar_autor(id):
    autor = consultar_autor_por_id(conexao,id)
    return jsonify(autor)
 
-
-
-
-
-
-
 @app.route("/usuarios", methods=["GET"])
 def listar_todos_usuarios():
     conexao = conecta_db()
@@ -144,6 +147,27 @@ def inserir_editora():
     print(nome)
     return jsonify(data)
 
+@app.route('/login', methods=["POST"])
+def login():
+
+    if not request.is_json:
+        return jsonify({ "msg": "Json inválido !"}), 400
+
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
+
+    # Verificar se os dados do json está no formato valido
+
+    if not username or not password:
+        return jsonify({ "msg": "Usuario e senha invalido !"}), 400
+    
+    # Verificar Usuario e Senha se estão corretos
+
+    if username in users and users[username] == password:
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token), 200
+    else:
+        return jsonify({"msg": "Usuario e senhas inválidos"})
 
 
 if __name__ == "__main__":
